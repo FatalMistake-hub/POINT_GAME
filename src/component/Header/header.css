@@ -1,0 +1,28 @@
+.header {
+  gap: 20px;
+  text-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+/* .header__tittle {
+}
+.header__config {
+}
+.header__config-label {
+}
+.header__config-input {
+}
+.header__time {
+}
+.header__time-label {
+}
+.header__time-value {
+}
+.header__restart {
+} */
+.header__restart-button {
+  padding: 5px 20px;
+  cursor: pointer;
+}
