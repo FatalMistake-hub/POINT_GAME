@@ -6,9 +6,15 @@
   justify-content: flex-start;
   align-items: flex-start;
 }
-/* .header__tittle {
+.header__tittle {
 }
-.header__config {
+.header__tittle.error{
+  color: red;
+}
+.header__tittle.success{
+  color: green;
+}
+/* .header__config {
 }
 .header__config-label {
 }

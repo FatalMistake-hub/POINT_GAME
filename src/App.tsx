@@ -8,11 +8,13 @@ function App() {
   const [point, setPoint] = useState<number>(0);
   const [isSuccess, setIsSuccess] = useState<boolean>();
   const [running, setRunning] = useState<boolean>(false);
-
+  const [timing, setTiming] = useState<number>(0);
   return (
     <>
       <div className="main">
         <Header
+          timing={timing}
+          setTiming={setTiming}
           point={point}
           setPoint={setPoint}
           isSuccess={isSuccess}
@@ -21,6 +23,8 @@ function App() {
           setRunning={setRunning}
           />
         <Container point={point}
+          timing={timing}
+          setTiming={setTiming}
           isSuccess={isSuccess}
           setIsSuccess={setIsSuccess}
           setPoint={setPoint} 

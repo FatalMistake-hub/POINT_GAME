@@ -7,40 +7,54 @@ type Props = {
   setRunning: React.Dispatch<React.SetStateAction<boolean>>;
   point: number;
   setPoint: React.Dispatch<React.SetStateAction<number>>;
+  timing: number;
+  setTiming: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export default function Header({
   point,
   setPoint,
+  timing,
+  setTiming,
   isSuccess,
   setIsSuccess,
   running,
   setRunning,
 }: Props) {
-  const [timing, setTiming] = useState<number>(0);
+  
   function getGameMessage() {
-    if (isSuccess === undefined) {
-      return "LET'S PLAY";
+    if (isSuccess === undefined || running) {
+      return {
+        message: "LET'S PLAY",
+        value: "info",
+      };
     }
-    return isSuccess ? "You win" : "Game over";
+    return isSuccess
+      ? {
+          message: "YOU WIN",
+          value: "success",
+        }
+      : {
+          message: "GAME OVER",
+          value: "error",
+        };
   }
   useEffect(() => {
-    if (!running) {
-      setTiming(0);
-    }
     let interval: number | undefined;
     if (running) {
       interval = setInterval(() => {
-        setTiming((prev) => prev + 1);
-      }, 1000);
+        setTiming((prev) => prev + 100);
+      }, 100);
     } else {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [running,isSuccess]);
+  }, [running, isSuccess]);
   return (
     <div className="header">
-      <h2 className="header__tittle">{getGameMessage()}</h2>
+      <h2 className={`header__tittle ${getGameMessage().value}`}>
+        {getGameMessage().message}
+      </h2>
       <div className="header__config">
         <div className="header__config-label">
           <span>Points:</span>
@@ -54,6 +68,7 @@ export default function Header({
               setPoint(parseInt(e.target.value));
             }}
             min={0}
+            max={10000}
             value={point}
           />
         </div>
@@ -63,7 +78,7 @@ export default function Header({
           <span>Time:</span>
         </div>
         <div className="header__time-value">
-          <span>{timing}s</span>
+          <span>{(timing / 1000).toFixed(1)}s</span>
         </div>
       </div>
       <div className="header__restart">
@@ -72,10 +87,9 @@ export default function Header({
           onClick={() => {
             setRunning(true);
             setTiming(0);
-            setIsSuccess(undefined);
           }}
         >
-          {!running ? "Play" : "Restart"}
+          {(isSuccess === undefined && !running) ? "Play" : "Restart"}
         </button>
       </div>
     </div>
