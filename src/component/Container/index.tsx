@@ -67,7 +67,6 @@ export default function Container({
             style={{
               top: `${point.y}px`,
               left: `${point.x}px`,
-              backgroundColor: "salmon",
               position: "absolute",
               width: `${POINT_SIZE}px`,
               height: `${POINT_SIZE}px`,
