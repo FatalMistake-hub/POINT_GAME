@@ -1,14 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { AppState, AppStateHandlers } from "../../hook/useAppState";
 import "./header.css";
-type Props = {
-  isSuccess?: boolean;
-  setIsSuccess: React.Dispatch<React.SetStateAction<boolean | undefined>>;
-  running?: boolean;
-  setRunning: React.Dispatch<React.SetStateAction<boolean>>;
-  point: number;
-  setPoint: React.Dispatch<React.SetStateAction<number>>;
-  timing: number;
-  setTiming: React.Dispatch<React.SetStateAction<number>>;
+
+interface Props extends AppState, AppStateHandlers {}
+
+const GAME_MESSAGES = {
+  play: { message: "LET'S PLAY", value: "info" },
+  win: { message: "YOU WIN", value: "success" },
+  lose: { message: "GAME OVER", value: "error" },
+};
+
+const getGameMessage = (isSuccess: boolean | undefined, running: boolean) => {
+  if (isSuccess === undefined || running) {
+    return GAME_MESSAGES.play;
+  }
+  return isSuccess ? GAME_MESSAGES.win : GAME_MESSAGES.lose;
 };
 
 export default function Header({
@@ -17,44 +23,26 @@ export default function Header({
   timing,
   setTiming,
   isSuccess,
-  setIsSuccess,
   running,
   setRunning,
 }: Props) {
-  
-  function getGameMessage() {
-    if (isSuccess === undefined || running) {
-      return {
-        message: "LET'S PLAY",
-        value: "info",
-      };
-    }
-    return isSuccess
-      ? {
-          message: "YOU WIN",
-          value: "success",
-        }
-      : {
-          message: "GAME OVER",
-          value: "error",
-        };
-  }
   useEffect(() => {
     let interval: number | undefined;
     if (running) {
-      interval = setInterval(() => {
+      interval = window.setInterval(() => {
         setTiming((prev) => prev + 100);
       }, 100);
     } else {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [running, isSuccess]);
+  }, [running, isSuccess, setTiming]);
+
+  const { message, value } = getGameMessage(isSuccess, running);
+
   return (
     <div className="header">
-      <h2 className={`header__tittle ${getGameMessage().value}`}>
-        {getGameMessage().message}
-      </h2>
+      <h2 className={`header__title ${value}`}>{message}</h2>
       <div className="header__config">
         <div className="header__config-label">
           <span>Points:</span>
@@ -64,11 +52,11 @@ export default function Header({
             type="number"
             placeholder="Enter point"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              console.log(e.target.value);
-              setPoint(parseInt(e.target.value));
+              const value = Math.min(parseInt(e.target.value, 10), 1000);
+              setPoint(value);
             }}
             min={0}
-            max={10000}
+            max={1000}
             value={point}
           />
         </div>
@@ -89,7 +77,7 @@ export default function Header({
             setTiming(0);
           }}
         >
-          {(isSuccess === undefined && !running) ? "Play" : "Restart"}
+          {isSuccess === undefined && !running ? "Play" : "Restart"}
         </button>
       </div>
     </div>

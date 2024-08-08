@@ -1,23 +1,18 @@
 import React, { useEffect, useRef } from "react";
 import "./container.css";
 import { Point } from "../../types";
-type Props = {
-  point: number;
-  setPoint: React.Dispatch<React.SetStateAction<number>>;
-  isSuccess?: boolean;
-  setIsSuccess: React.Dispatch<React.SetStateAction<boolean | undefined>>;
-  running?: boolean;
-  setRunning: React.Dispatch<React.SetStateAction<boolean>>;
-  timing: number;
-  setTiming: React.Dispatch<React.SetStateAction<number>>;
-};
+import { AppState, AppStateHandlers } from "../../hook/useAppState";
+interface Props extends AppState, AppStateHandlers {}
+
 const POINT_SIZE = 48;
+const CONTAINER_HEIGHT = 768;
+const CONTAINER_WIDTH = 1024;
+const MAX_POSITION_X = CONTAINER_WIDTH - POINT_SIZE;
+const MAX_POSITION_Y = CONTAINER_HEIGHT - POINT_SIZE;
+
 export default function Container({
   point,
-  setPoint,
   timing,
-  setTiming,
-  isSuccess,
   setIsSuccess,
   running,
   setRunning,
@@ -26,8 +21,14 @@ export default function Container({
   const [pointList, setPointList] = React.useState<Point[]>([]);
   const clearPoint = (value: number) => {
     if (value === currentPoint.current + 1) {
+      document.getElementById(value.toString())?.classList.add("removed");
       currentPoint.current++;
-      setPointList((prev) => prev.filter((point) => point.value !== value));
+      setTimeout(
+        () =>
+          setPointList((prev) => prev.filter((point) => point.value !== value)),
+        500
+      );
+
       if (currentPoint.current === point) {
         setRunning(false);
         setIsSuccess(true);
@@ -41,13 +42,9 @@ export default function Container({
   const generateRandomPoint = () => {
     currentPoint.current = 0;
     const pointList: Point[] = [];
-    const containerHeight = 768;
-    const containerWidth = 1024;
-    const maxPositionX = containerWidth - POINT_SIZE;
-    const maxPositionY = containerHeight - POINT_SIZE;
     for (let i = 0; i < point; i++) {
-      const x = Math.floor(Math.random() * maxPositionX);
-      const y = Math.floor(Math.random() * maxPositionY);
+      const x = Math.floor(Math.random() * MAX_POSITION_X);
+      const y = Math.floor(Math.random() * MAX_POSITION_Y);
       pointList.push({ x, y, value: i + 1 });
     }
     setPointList(pointList);
@@ -74,8 +71,7 @@ export default function Container({
               zIndex: `${index + 1}`,
             }}
             onClick={() => {
-              document.getElementById(point.value.toString())?.classList.add("removed");
-              running && setTimeout(() => clearPoint(point.value), 500);
+              running && clearPoint(point.value);
             }}
           >
             {point.value}

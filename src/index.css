@@ -32,6 +32,7 @@ h1 {
 }
 input{
   padding: 10px;
+  width: 200px;
 }
 button {
   border-radius: 8px;

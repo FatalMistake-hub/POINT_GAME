@@ -6,28 +6,15 @@
   justify-content: flex-start;
   align-items: flex-start;
 }
-.header__tittle {
+.header__title {
 }
-.header__tittle.error{
+.header__title.error{
   color: red;
 }
-.header__tittle.success{
+.header__title.success{
   color: green;
 }
-/* .header__config {
-}
-.header__config-label {
-}
-.header__config-input {
-}
-.header__time {
-}
-.header__time-label {
-}
-.header__time-value {
-}
-.header__restart {
-} */
+
 .header__restart-button {
   padding: 5px 20px;
   cursor: pointer;

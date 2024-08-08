@@ -1,38 +1,17 @@
-import { useState } from "react";
+// App.tsx
 import "./App.css";
 import Container from "./component/Container";
 import Header from "./component/Header";
+import { useAppState } from "./hook/useAppState";
 
 function App() {
-  // const time = useRef()
-  const [point, setPoint] = useState<number>(0);
-  const [isSuccess, setIsSuccess] = useState<boolean>();
-  const [running, setRunning] = useState<boolean>(false);
-  const [timing, setTiming] = useState<number>(0);
+  const [state, handlers] = useAppState();
+
   return (
-    <>
-      <div className="main">
-        <Header
-          timing={timing}
-          setTiming={setTiming}
-          point={point}
-          setPoint={setPoint}
-          isSuccess={isSuccess}
-          setIsSuccess={setIsSuccess}
-          running={running}
-          setRunning={setRunning}
-          />
-        <Container point={point}
-          timing={timing}
-          setTiming={setTiming}
-          isSuccess={isSuccess}
-          setIsSuccess={setIsSuccess}
-          setPoint={setPoint} 
-          running={running}
-          setRunning={setRunning}
-          />
-      </div>
-    </>
+    <div className="main">
+      <Header {...state} {...handlers} />
+      <Container {...state} {...handlers} />
+    </div>
   );
 }
 
