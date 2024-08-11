@@ -6,7 +6,7 @@ import { useAppState } from "./hook/useAppState";
 
 function App() {
   const [state, handlers] = useAppState();
-
+  window.document.title = "Point Game";
   return (
     <div className="main">
       <Header {...state} {...handlers} />
