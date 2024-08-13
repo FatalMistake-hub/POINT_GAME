@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Container from "./index";
-import { vi } from "vitest";
+import { describe, vi } from "vitest";
 
 const mockSetPoint = vi.fn();
 const mockSetTiming = vi.fn();
@@ -54,5 +54,15 @@ describe("Container Component", () => {
     // Check if the game is stopped and isSuccess is set to true
     expect(mockProps.setRunning).toHaveBeenCalledWith(false);
     expect(mockProps.setIsSuccess).toHaveBeenCalledWith(true);
+  });
+  describe("Container performance", () => {
+    test("should render 250 points in less than 100ms", () => {
+      const start = performance.now();
+      mockProps.point = 250;
+      render(<Container {...mockProps} />);
+      const end = performance.now();
+      const time = end - start;
+      expect(time).toBeLessThan(100);
+    });
   });
 });

@@ -1,0 +1,71 @@
+// Vitest Snapshot v1
+
+exports[`App Component > renders correctly and matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="main"
+  >
+    <div
+      class="header"
+    >
+      <h2
+        class="header__title info"
+      >
+        LET'S PLAY
+      </h2>
+      <div
+        class="header__config"
+      >
+        <div
+          class="header__config-label"
+        >
+          <span>
+            Points:
+          </span>
+        </div>
+        <div
+          class="header__config-input"
+        >
+          <input
+            max="1000"
+            min="0"
+            placeholder="Enter point"
+            type="number"
+            value="0"
+          />
+        </div>
+      </div>
+      <div
+        class="header__time"
+      >
+        <div
+          class="header__time-label"
+        >
+          <span>
+            Time:
+          </span>
+        </div>
+        <div
+          class="header__time-value"
+        >
+          <span>
+            0.0s
+          </span>
+        </div>
+      </div>
+      <div
+        class="header__restart"
+      >
+        <button
+          class="header__restart-button"
+        >
+          Play
+        </button>
+      </div>
+    </div>
+    <div
+      class="container"
+    />
+  </div>
+</DocumentFragment>
+`;
