@@ -25,6 +25,8 @@ export default function Header({
   isSuccess,
   running,
   setRunning,
+  autoPlay,
+  setAutoPlay,
 }: Props) {
   useEffect(() => {
     let interval: number | undefined;
@@ -78,6 +80,15 @@ export default function Header({
           }}
         >
           {isSuccess === undefined && !running ? "Play" : "Restart"}
+        </button>
+        <button
+          className="header__restart-button"
+          onClick={() => {
+            setAutoPlay((prev) => !
+              prev);
+          }}
+        >
+          {autoPlay ? "Auto Play On" : "Auto Play Off"}
         </button>
       </div>
     </div>

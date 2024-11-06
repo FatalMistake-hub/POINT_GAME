@@ -6,6 +6,7 @@ export interface AppState {
   isSuccess?: boolean;
   running: boolean;
   timing: number;
+  autoPlay: boolean;
 }
 
 export interface AppStateHandlers {
@@ -13,6 +14,7 @@ export interface AppStateHandlers {
   setIsSuccess: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   setRunning: React.Dispatch<React.SetStateAction<boolean>>;
   setTiming: React.Dispatch<React.SetStateAction<number>>;
+  setAutoPlay: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const useAppState = (): [AppState, AppStateHandlers] => {
@@ -20,9 +22,9 @@ export const useAppState = (): [AppState, AppStateHandlers] => {
   const [isSuccess, setIsSuccess] = useState<boolean>();
   const [running, setRunning] = useState<boolean>(false);
   const [timing, setTiming] = useState<number>(0);
-
+  const [autoPlay, setAutoPlay] = useState<boolean>(false);
   return [
-    { point, isSuccess, running, timing },
-    { setPoint, setIsSuccess, setRunning, setTiming },
+    { point, isSuccess, running, timing, autoPlay },
+    { setPoint, setIsSuccess, setRunning, setTiming, setAutoPlay },
   ];
 };

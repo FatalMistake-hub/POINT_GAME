@@ -59,5 +59,9 @@ describe("Header Component", () => {
     expect(mockSetInterval).toHaveBeenCalled();
     render(<Header {...mockProps} running={false} />);
     expect(mockClearInterval).toHaveBeenCalled();
-  } );
+  });
+  afterAll(() => {
+    mockClearInterval.mockRestore();
+    mockSetInterval.mockRestore();
+  });
 });

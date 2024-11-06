@@ -19,6 +19,6 @@
   transition: all 1s ease, background-color 1s linear, opacity 1s ease-in-out;
 }
 .point.removed {
-  background-color: rgb(255, 251, 0);
+  background-color: salmon;
   opacity: 0;
 }
