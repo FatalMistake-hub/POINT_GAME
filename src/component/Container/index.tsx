@@ -144,7 +144,7 @@ const PointItem = memo(
       if (status === "removed") {
         interval.current = setInterval(() => {
           setTimeLeft((prev) => prev - 100);
-          setOpacity((prev) => prev - 0.005);
+          setOpacity((prev) => prev - 0.05);
         }, 100);
       } else {
         setOpacity(1);
