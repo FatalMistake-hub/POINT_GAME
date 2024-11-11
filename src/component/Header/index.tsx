@@ -54,11 +54,11 @@ export default function Header({
             type="number"
             placeholder="Enter point"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const value = Math.min(parseInt(e.target.value, 10), 1000);
+              const value = Math.min(parseInt(e.target.value, 10), 2000);
               setPoint(value);
             }}
             min={0}
-            max={1000}
+            max={2000}
             value={point}
           />
         </div>
@@ -81,15 +81,17 @@ export default function Header({
         >
           {isSuccess === undefined && !running ? "Play" : "Restart"}
         </button>
-        <button
-          className="header__restart-button"
-          onClick={() => {
-            setAutoPlay((prev) => !
-              prev);
-          }}
-        >
-          {autoPlay ? "Auto Play On" : "Auto Play Off"}
-        </button>
+        {running && (
+          <button
+            className="header__restart-button"
+            onClick={() => {
+              setAutoPlay((prev) => !prev);
+              setRunning(true);
+            }}
+          >
+            {autoPlay ? "Auto Play On" : "Auto Play Off"}
+          </button>
+        )}
       </div>
     </div>
   );

@@ -7,18 +7,13 @@
   margin-top: 1rem;
 }
 .point {
-  border: 1px solid #f9f9f9;
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-color: salmon;
+  border: 2px salmon solid;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: all 1s ease, background-color 1s linear, opacity 1s ease-in-out;
 }
-.point.removed {
-  background-color: salmon;
-  opacity: 0;
-}
+

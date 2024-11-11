@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import "./container.css";
 import { Point } from "../../types";
 import { AppState, AppStateHandlers } from "../../hook/useAppState";
@@ -13,46 +13,54 @@ const MAX_POSITION_Y = CONTAINER_HEIGHT - POINT_SIZE;
 export default function Container({
   point,
   timing,
+  setTiming,
+  isSuccess,
   setIsSuccess,
   running,
   setRunning,
   autoPlay,
   setAutoPlay,
 }: Props) {
-  const currentPoint = useRef<number>(0);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const currentPoint = useRef(0);
+  const listTimeoutRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const [pointList, setPointList] = React.useState<Point[]>([]);
-  const clearPoint = (value: number) => {
+  const [isLose, setIsLose] = useState(false);
+
+  const clearPoint = useCallback((value: number) => {
+    let timeOutClearPoint: ReturnType<typeof setTimeout> | null = null;
+    let timeOutClearPointe: ReturnType<typeof setTimeout> | null = null;
     if (value === currentPoint.current + 1) {
       currentPoint.current++;
-      document.getElementById(value.toString())?.classList.add("removed");
-      pointList.find((point) => point.value === value)!.status = "removed";
-      setTimeout(() => {
-        setPointList((prev) => prev.filter((point) => point.value !== value));
+      setPointList((prev) => {
+        return prev.map((point) =>
+          point.value === value ? { ...point, status: "removed" } : point
+        );
+      });
+      timeOutClearPoint = setTimeout(() => {
+        setPointList((prev) => {
+          return prev.map((point) =>
+            point.value === value ? { ...point, status: "deleted" } : point
+          );
+        });
       }, 3000);
       if (autoPlay) {
-        timeoutRef.current = setTimeout(
-          () => clearPoint(currentPoint.current + 1),
-          3000
-        );
-      } else {
-        timeoutRef.current && clearTimeout(timeoutRef.current);
-        return;
+        timeOutClearPointe = setTimeout(() => clearPoint(value + 1), 1000);
       }
-      if (currentPoint.current === point) {
-        setRunning(false);
-        setIsSuccess(true);
-        setAutoPlay(false);
-        return;
-      }
+      listTimeoutRef.current.push(timeOutClearPoint);
+      timeOutClearPointe && listTimeoutRef.current.push(timeOutClearPointe);
     } else {
+      setIsLose(true);
+      listTimeoutRef.current.forEach((timeout) => clearTimeout(timeout));
       setRunning(false);
       setIsSuccess(false);
     }
-  };
+  }, [ autoPlay, listTimeoutRef, setPointList, setRunning, setIsSuccess]);
 
   const generateRandomPoint = () => {
+    listTimeoutRef.current.forEach((timeout) => clearTimeout(timeout));
+    setIsLose(false);
     currentPoint.current = 0;
+    setPointList([]);
     const pointList: Point[] = [];
     for (let i = 0; i < point; i++) {
       const x = Math.floor(Math.random() * MAX_POSITION_X);
@@ -61,87 +69,139 @@ export default function Container({
     }
     setPointList(pointList);
   };
+
   useEffect(() => {
     point > 0 && running && timing === 0 && generateRandomPoint();
   }, [point, running, timing]);
   useEffect(() => {
     if (autoPlay && running) {
       clearPoint(currentPoint.current + 1);
-    } else {
-      setRunning(false);
-      timeoutRef.current && clearTimeout(timeoutRef.current);
+    } else if (!autoPlay) {
+      listTimeoutRef.current.forEach((timeout) => clearTimeout(timeout));
     }
     return () => {
-      timeoutRef.current && clearTimeout(timeoutRef.current);
-    }
-  }, [autoPlay, running]);
+      listTimeoutRef.current.forEach((timeout) => clearTimeout(timeout));
+    };
+  }, [autoPlay]);
+  if (
+    !pointList.some((item) => item.status !== "deleted") &&
+    running &&
+    timing > 0
+  ) {
+    setRunning(false);
+    setIsSuccess(true);
+    setAutoPlay(false);
+  }
   return (
-    <div className="container">
-      {pointList
-        .sort((a, b) => b.value - a.value)
-        .map((point, index) => (
-          <PointItem
-            {...point}
-            index={index}
-            key={point.value}
-            handleClick={() => {
-              running && clearPoint(point.value);
-            }}
-          />
-        ))}
-    </div>
-  );
-}
-const PointItem = ({
-  x,
-  y,
-  value,
-  status,
-  index,
-  handleClick,
-}: Point & { index: number; handleClick: () => void }) => {
-  const [timeLeft, setTimeLeft] = useState(3000);
-  useEffect(() => {
-    if (status === "removed") {
-      const interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 10);
-        if (timeLeft === 0) {
-          clearInterval(interval);
-        }
-      }, 10);
-      return () => clearInterval(interval);
-    }
-  }, [status]);
-  return (
-    <div
-      id={value.toString()}
-      className="point"
-      style={{
-        top: `${y}px`,
-        left: `${x}px`,
-        position: "absolute",
-        width: `${POINT_SIZE}px`,
-        height: `${POINT_SIZE}px`,
-        borderRadius: "50%",
-        zIndex: `${index + 1}`,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        gap: "2px",
-        opacity: status === "removed" ? `${timeLeft / 3000}` : 1,
-      }}
-      onClick={handleClick}
-    >
-      <span style={{ color: "black" }}>{value}</span>
-      {status === "removed" && (
-        <span
+    <>
+      <div className="container">
+        {pointList
+          .sort((a, b) => b.value - a.value)
+          .map((pointItem, index) => (
+            <PointItem
+              {...pointItem}
+              index={index}
+              isLose={isLose}
+              handleClick={() => {
+                running && clearPoint(pointItem.value);
+              }}
+              setPointList={setPointList}
+            />
+          ))}
+      </div>
+      {currentPoint.current + 1 <= point && (
+        <p
           style={{
-            color: "white",
+            textAlign: "left",
           }}
         >
-          {(timeLeft / 1000).toFixed(1)}s
-        </span>
+          next point: {currentPoint.current + 1}
+        </p>
       )}
-    </div>
+    </>
   );
-};
+}
+const PointItem = memo(
+  ({
+    x,
+    y,
+    value,
+    status,
+    index,
+    handleClick,
+    isLose,
+    setPointList,
+  }: Point & {
+    index: number;
+    handleClick: () => void;
+    isLose: boolean;
+    setPointList: React.Dispatch<React.SetStateAction<Point[]>>;
+  }) => {
+    const [timeLeft, setTimeLeft] = useState(3000);
+    const [opacity, setOpacity] = useState(1);
+    const interval = useRef<any>();
+    useEffect(() => {
+      if (status === "removed") {
+        interval.current = setInterval(() => {
+          setTimeLeft((prev) => prev - 10);
+          setOpacity((prev) => prev - 0.005);
+        }, 10);
+      } else {
+        setOpacity(1);
+      }
+      if (timeLeft <= 0) {
+        setPointList((prev) => {
+          return prev.map((point) =>
+            point.value === value ? { ...point, status: "deleted" } : point
+          );
+        });
+      }
+      return () => {
+        interval && clearInterval(interval.current);
+      };
+    }, [status, timeLeft, interval]);
+    useEffect(() => {
+      if (isLose) {
+        interval && clearInterval(interval.current);
+      }
+    }, [interval, isLose]);
+    if (status === "deleted") return null;
+    return (
+      <div
+        id={value.toString()}
+        className="point"
+        style={{
+          backgroundColor:
+            status === "removed" ? "salmon" : "rgba(255, 250, 250, 0.278)",
+          top: `${y}px`,
+          left: `${x}px`,
+          position: "absolute",
+          width: `${POINT_SIZE}px`,
+          height: `${POINT_SIZE}px`,
+          borderRadius: "50%",
+          zIndex: `${index + 1}`,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          gap: "2px",
+          opacity,
+        }}
+        onClick={handleClick}
+      >
+        <span style={{ color: "black" }}>{value}</span>
+        {status === "removed" && (
+          <span
+            style={{
+              color: "black",
+            }}
+          >
+            {(timeLeft / 1000).toFixed(1)}s
+          </span>
+        )}
+      </div>
+    );
+  },
+  (prevProps, nextProps) => {
+    return JSON.stringify(prevProps) === JSON.stringify(nextProps);
+  }
+);
