@@ -6,7 +6,7 @@ interface Props extends AppState, AppStateHandlers {}
 
 const GAME_MESSAGES = {
   play: { message: "LET'S PLAY", value: "info" },
-  win: { message: "YOU WIN", value: "success" },
+  win: { message: "ALL CLEARED", value: "success" },
   lose: { message: "GAME OVER", value: "error" },
 };
 
@@ -77,6 +77,7 @@ export default function Header({
           onClick={() => {
             setRunning(true);
             setTiming(0);
+            setAutoPlay(false);
           }}
         >
           {isSuccess === undefined && !running ? "Play" : "Restart"}

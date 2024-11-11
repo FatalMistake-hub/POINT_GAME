@@ -29,13 +29,13 @@ export default function Container({
   const clearPoint = useCallback((value: number) => {
     let timeOutClearPoint: ReturnType<typeof setTimeout> | null = null;
     let timeOutClearPointe: ReturnType<typeof setTimeout> | null = null;
+    setPointList((prev) => {
+      return prev.map((point) =>
+        point.value === value ? { ...point, status: "removed" } : point
+      );
+    });
     if (value === currentPoint.current + 1) {
       currentPoint.current++;
-      setPointList((prev) => {
-        return prev.map((point) =>
-          point.value === value ? { ...point, status: "removed" } : point
-        );
-      });
       timeOutClearPoint = setTimeout(() => {
         setPointList((prev) => {
           return prev.map((point) =>
@@ -148,6 +148,7 @@ const PointItem = memo(
         }, 10);
       } else {
         setOpacity(1);
+        setTimeLeft(3000);
       }
       if (timeLeft <= 0) {
         setPointList((prev) => {
@@ -172,7 +173,7 @@ const PointItem = memo(
         className="point"
         style={{
           backgroundColor:
-            status === "removed" ? "salmon" : "rgba(255, 250, 250, 0.278)",
+            status === "removed" ? "salmon" : "white",
           top: `${y}px`,
           left: `${x}px`,
           position: "absolute",

@@ -38,7 +38,7 @@ describe("Header Component", () => {
 
   test("displays correct message when game is won", () => {
     render(<Header {...mockProps} isSuccess={true} running={false} />);
-    expect(screen.getByText("YOU WIN")).toBeInTheDocument();
+    expect(screen.getByText("ALL CLEARED")).toBeInTheDocument();
   });
 
   test("displays correct message when game is lost", () => {
