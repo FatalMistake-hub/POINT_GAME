@@ -2,5 +2,5 @@ export interface Point {
   x: number;
   y: number;
   value: number;
-  status: "active" | "removed" | "deleted";
+  status: "active" | "removing" | "deleted";
 }
